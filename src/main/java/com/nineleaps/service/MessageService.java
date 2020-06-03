@@ -28,12 +28,13 @@ public class MessageService {
 	@Autowired
 	private MessageRepository messageRepository;
 	
+	@Autowired
+	private NotificationProducer notificationProducer;
+
 	private RedisTemplate<String, Object> redisTemplate;
 	
 	private HashOperations<String, UUID, Message> hashOperations;
 
-	@Autowired
-	private NotificationProducer notificationProducer;
 	
 	@Autowired
 	public MessageService(RedisTemplate<String, Object> redisTemplate) {

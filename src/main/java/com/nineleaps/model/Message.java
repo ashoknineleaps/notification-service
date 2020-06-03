@@ -17,6 +17,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(description = "This model is to create a Supplier")
 @Table(value = "messages_by_id")
 public class Message implements Serializable{
 
@@ -25,10 +29,12 @@ public class Message implements Serializable{
 	 */
 	private static final long serialVersionUID = 6709559705559089909L;
 
+	@ApiModelProperty(notes = "Auto generated unique id", required = true, position = 1)
 	@PrimaryKey
 	@CassandraType(type = DataType.Name.UUID)
 	private UUID id = UUID.randomUUID();
 	
+	@ApiModelProperty(notes = "Supplier should be in Valid Name", example = "Ashok", required = true, position = 2)
 	@NotNull(message = "Message Title must not be null")
 	@CassandraType(type = DataType.Name.TEXT)
 	@Column(value = "title")

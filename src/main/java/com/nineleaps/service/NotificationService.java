@@ -1,7 +1,9 @@
 package com.nineleaps.service;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
 
@@ -39,6 +41,8 @@ public class NotificationService {
 	
 	private HashOperations<String, UUID, Notification> hashOperations;
 	
+	private Map<UUID, Notification> map = new ConcurrentHashMap<>();
+	
 	@Autowired
 	public NotificationService(RedisTemplate<String, Object> redisTemplate) {
 		this.redisTemplate = redisTemplate;
@@ -50,11 +54,12 @@ public class NotificationService {
 		hashOperations = redisTemplate.opsForHash();
 	}
 	
+	//self-invocation doesn't work because it bypasses the proxy and calls the underlying method directly.
 	@Async
 	public Notification triggerNotification(Message message)
 	{
 		Notification notification = saveNotification(message);
-		
+
 		return notification;
 	}
 
@@ -70,6 +75,7 @@ public class NotificationService {
 		
 		LOGGER.info("Saved Notification: "+savedNotification);
 		
+		map.put(savedNotification.getId(), savedNotification);
 
 		//Email Notification Logic
 		//emailNotificationService.sendMail(message.getId(), savedNotification.getId());
@@ -107,4 +113,8 @@ public class NotificationService {
 		return deletedHashKey;
 	}
 	
+	public Map<UUID, Notification> getMap()
+	{
+		return map;
+	}
 }
